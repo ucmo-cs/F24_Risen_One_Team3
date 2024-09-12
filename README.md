@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Setting Up a Serverless Angular Project
 
 This guide will help you set up a serverless application with an Angular frontend and a serverless backend hosted on AWS using AWS Lambda and DynamoDB.
@@ -161,3 +162,7 @@ Following these steps will help you set up and deploy a serverless Angular appli
 
 
 
+=======
+# F24_Risen_One_Team3
+UCM Senior Project Fall '24 Risen One Team 3 Repo
+>>>>>>> a5eb20471d6f5d64af3cf2ab508eda8521ea3b52
