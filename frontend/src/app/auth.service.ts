@@ -1,40 +1,44 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient,private router: Router) { }
+  private apiUrl = "https://ji2vteb0o9.execute-api.us-east-2.amazonaws.com/dev/login";  // api endpoint (change to yours)
+  
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(username: string, password: string): Observable<boolean> {
-    // Your login logic with Lambda function
-    // Simulating success for demonstration purposes
-    const loginSuccess = true;
-    
-    return new Observable<boolean>((observer) => {
-      if (loginSuccess) {
-        observer.next(true); // Notify subscribers that login was successful
-        observer.complete(); // Complete the observable
-      } else {
-        observer.error('Login failed'); // Notify subscribers that login failed
-      }
-    });
-  }
+    const body = {
+        body: JSON.stringify({ username, password })
+    };
+
+    return this.http.post<{ statusCode: number, body: string }>(this.apiUrl, body).pipe(
+        map(response => {
+            console.log('API Response:', JSON.stringify(response)); // print response for testing api
+
+            const parsedBody = JSON.parse(response.body); //converts input to json format
+            if (parsedBody.message === 'Login successful') { // checks message sent from lamba against requirment
+                return true;
+            } else {
+                throw new Error('Login failed');  // Not correct username/pass, throws error
+            }
+        }),
+        catchError(error => {  // catches error thrown from above
+            console.error('Login error:', error);  // testing statement
+            return new Observable<boolean>(observer => {
+                observer.next(false); // sets to false
+                observer.complete();
+            });
+        })
+    );
+}
 
   logout() {
-    // Your logout logic with Lambda function
-    // Simulating success for demonstration purposes
-    const logoutSuccess = true;
-
-    if (logoutSuccess) {
-      // Redirect to login page or any other desired page
-      this.router.navigate(['/login']);
-    } else {
-      // Handle logout failure
-      console.error('Logout failed');
-    }
+    localStorage.removeItem('token'); // Remove any token or user data
+    this.router.navigate(['/login']); // 
   }
 }

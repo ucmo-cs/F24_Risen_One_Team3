@@ -51,7 +51,8 @@
                                         <input matInput id="password" name="password" type="password" required [(ngModel)]="password">
                                     </mat-form-field>
                                 </div>
-                                <button mat-raised-button color="primary" class="login-button" (click)="login()">Login</button>
+                                <!-- Added event to wait for api message first-->
+                                <button mat-raised-button color="primary" class="login-button" (click)="login(); $event.preventDefault()">Login</button>
                             </form>
                         </mat-card-content>
                     </mat-card>
