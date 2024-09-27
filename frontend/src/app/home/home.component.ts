@@ -25,4 +25,5 @@ export class HomeComponent {
   signIn() {
     this.router.navigate(['/login']);
   }
+  //Test
 }
