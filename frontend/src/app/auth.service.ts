@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = "https://ji2vteb0o9.execute-api.us-east-2.amazonaws.com/dev/login";  // api endpoint (change to yours)
+  private apiUrl = "";  // api endpoint (change to yours)
   
   constructor(private http: HttpClient, private router: Router) {}
 
