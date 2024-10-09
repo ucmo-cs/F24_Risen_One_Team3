@@ -165,8 +165,19 @@ text-area {
 
 
 }
-  
-  span {
+span {
     background: black;
     color: white;
-  }
+}
+table, th, td, tr {
+    border: 1px solid black; 
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    padding: 10px;
+}
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -21,7 +21,17 @@ interface previousRequest {
 export class HomeComponent {
   constructor (private router: Router ) {}
   /* Sign In navigation Function */
-  ngOnInit(){}
+  ngOnInit() {
+    this.changeHeaderText("Risen One Consulting Employee Portal");
+  }
+  changeHeaderText(newText: string) {
+    const headerElement = document.getElementById("primeHeader");
+    if (headerElement) {
+      headerElement.textContent = newText;
+    } else {
+      console.error("Element with ID 'primeHeader' not found.");
+    }
+  }
   signIn() {
     this.router.navigate(['/login']);
   }
