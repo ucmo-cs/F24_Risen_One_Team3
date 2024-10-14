@@ -5,10 +5,14 @@ import { HttpClient } from '@angular/common/http';
 import { map, catchError, Observable } from 'rxjs';
 
 
-
-interface previousRequest {
+interface Project {
   value: string;
   viewValue: string;
+}
+
+interface ApiResponse {
+  statusCode: number;
+  body: string[]; // Assuming body is an array of strings
 }
 
 
@@ -21,7 +25,9 @@ interface previousRequest {
 
 
 export class tablePageComponent {
-  private apiUrl = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/login";  // api endpoint (change to yours)
+  
+  private apiUrl2 = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/Project";  // api endpoint (change to yours)
+  projects: any[] = [];
   
   constructor(private http: HttpClient, private router: Router) {}
   ngOnInit() {
@@ -30,11 +36,29 @@ export class tablePageComponent {
     this.fillDropDowns();
   }
   fillDropDowns(){
-    /*
-    private apiUrl = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/Project";  // api endpoint (change to yours)
-    constructor(private http: HttpClient, private router: Router) {}
-    */
-
+    this.http.get<ApiResponse>(this.apiUrl2).subscribe(
+      response => {
+          console.log(response);
+          const projectNames = response.body; // Adjust based on actual structure
+          
+          // Assuming you have a property to store dropdown options
+          this.projects = projectNames; 
+          console.log(this.projects);
+          this.populateSelect();
+      },
+      error => {
+          console.error("Error fetching data:", error);
+      }
+    );
+  }
+  populateSelect() {
+    const selectElement = document.getElementById("projectSelect") as HTMLSelectElement; // Type assertion
+    this.projects.forEach((project) => {
+      const newOption = document.createElement("option");
+      newOption.value = project;
+      newOption.text = project;
+      selectElement.add(newOption);
+    });
   }
   changeHeaderText(newText: string) {
     const headerElement = document.getElementById("primeHeader");
@@ -108,9 +132,25 @@ export class tablePageComponent {
   }
   changeProject() {
     console.log("Project Changed");
+    const currentElement = document.getElementById("projectSelect") as HTMLSelectElement;
+    const currentValue = currentElement.value;
+    const currentText = currentElement.options[currentElement.selectedIndex].text;
+    console.log(currentText);
+    console.log(currentValue);
   }
   changeDate() {
     console.log("Date Changed");
+    const currentElement = document.getElementById("monthSelect") as HTMLSelectElement;
+    const str = currentElement.options[currentElement.selectedIndex].text;
+    if (str != null) {
+      const parts = str.split(" "); // Split the string by space
+      const month = parts[0]; // First part is the month
+      const year = parseInt(parts[1]);
+      const projectDateText = document.getElementById("projectDate") as HTMLSelectElement;
+      projectDateText.textContent = month + " " + year;
+    } else {
+      console.log("No date sselect option found.")
+    }
   }
   export() {
     console.log("Export Button working");
