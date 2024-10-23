@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" class="body">
     <div class="body">
-        <select name="projects" id="projectSelect" (change)="changeProject()">
-            <option value="" disabled selected>Select the Project</option>
-        </select>
-        <select name="months" id="monthSelect" (change)="changeDate()">
-            <option value="" disabled selected>Select the Month</option>
-        </select>
-        <button class="button-exportToPDF" (click)="export()">Export To PDF</button>
-        <button class="button-addNew" (click)="edit()">Edit</button>
-        <button class="button-save" (click)="save()">Save</button>
+        <div>
+            <select name="projects" id="projectSelect" (change)="changeProject()">
+                <option value="" disabled selected>Select the Project</option>
+            </select>
+            <select name="months" id="monthSelect" (change)="changeDate()">
+                <option value="" disabled selected>Select the Month</option>
+            </select>
+            <button class="button-exportToPDF" (click)="export()">Export To PDF</button>
+            <button class="button-addNew" (click)="edit()">Edit</button>
+            <button class="button-save" (click)="save()">Save</button>
+        </div>
         <h2 id="projectDate">Month and Year</h2>
         <table id="timeTable" class="center">
             

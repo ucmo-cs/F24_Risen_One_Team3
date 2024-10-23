@@ -55,6 +55,9 @@ export class tablePageComponent {
   private apiUrl2 = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/Project";  // api endpoint (change to yours)
   projects: any[] = [];
   employeeData: YearlyData = {};
+  month: string = "";
+  year = 0;
+  employee: String = "";
   
   constructor(private http: HttpClient, private router: Router) {}
   
@@ -237,15 +240,131 @@ export class tablePageComponent {
     //Sets the header to the selected date in the right format
     if (str != null) {
       const parts = str.split(" "); 
-      const month = parts[0]; 
-      const year = parseInt(parts[1]);
+      this.month = parts[0]; 
+      this.year = parseInt(parts[1]);
       const projectDateText = document.getElementById("projectDate") as HTMLSelectElement;
-      projectDateText.textContent = month + " " + year;
+      projectDateText.textContent = this.month + " " + this.year;
+      this.createTrueTable();
     } else {
       console.log("No date select option found.")
     }
   }
 
+  createTrueTable(){
+    const months: string[] = [
+      "January", "February", "March", "April", "May", "June", 
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const monthInt = months.indexOf(this.month);
+    monthInt + 1;
+    const numDays: number = new Date(this.year, monthInt, 0).getDate();
+    const isWeekday = (date: Date) => date.getDay()
+    const weekdays: number[] = [];
+    for (let g = 1; g <= numDays; g++) {
+      if (isWeekday(new Date(this.year, monthInt, g)) != 0 && isWeekday(new Date(this.year, monthInt, g)) != 6){
+        weekdays.push(g);
+      }
+    }
+    const tbl: HTMLElement | null = document.getElementById("timeTable");
+    if (!tbl) return;
+    // Select the current tbody
+    const oldTbody = tbl.querySelector('tbody');
+    
+    // Remove the current tbody
+    if (oldTbody) {
+        tbl.removeChild(oldTbody);
+    }
+
+    const names = [];
+    for (const person in this.employeeData[this.year][this.month]["Employees"]) {
+      names.push(person);
+    }
+
+    /*
+    console.log(weekdays);
+    console.log(names);
+    console.log(this.employeeData[this.year][this.month]["Employees"][names[0]]);
+    console.log(this.employeeData[this.year][this.month]["Employees"][names[0]][1]);
+    for (const day in this.employeeData[this.year][this.month]["Employees"][names[0]]) {
+      console.log("Day: " + day);
+      console.log("Weekday: " + weekdays[0]);
+      if (Number(day) == weekdays[0]) {
+        console.log("Result if above match: " + this.employeeData[this.year][this.month]["Employees"][names[0]][day]);
+      }
+    }
+    */
+
+    const tblBody: HTMLTableSectionElement = document.createElement("tbody");
+
+    let grandCount = 0;
+    // creating all cells
+    for (let i = 0; i <= names.length + 1; i++) {
+      // creates a table row
+      const row: HTMLTableRowElement = document.createElement("tr");
+      for (let j = 0; j <= weekdays.length + 1; j++) {
+        // creates the table cell and fills it based on position
+        const cell: HTMLTableCellElement = document.createElement("td");
+        let cellText;
+        if (i === 0) {
+          if (j === 0) {
+            cellText = document.createTextNode(`Names`);
+            cell.id = "Names";
+          } else if (j <= weekdays.length) {
+            cellText = document.createTextNode(`${weekdays[j - 1]}`);
+            cell.id = String(weekdays[j - 1]);
+          } else {
+            cellText = document.createTextNode(`Total`);
+            cell.id = "Total";
+          }
+        }else if (i != (names.length + 1)) {
+          if (j === 0) {
+            cellText = document.createTextNode(`${names[i - 1]}`);
+            cell.id = names[i - 1] + "  0";
+          } else if (j <= weekdays.length) {
+            for (const day in this.employeeData[this.year][this.month]["Employees"][names[i - 1]]) {
+              if (Number(day) == weekdays[j - 1]) {
+                cellText = document.createTextNode(`${
+                  this.employeeData[this.year][this.month]["Employees"][names[i - 1]][day]}`);
+                break;
+              } else {
+                cellText = document.createTextNode(`0`);
+              }
+            }
+            cell.id = names[i - 1] + " " + String(weekdays[j - 1]);
+          } else {
+            let count = 0;
+            for (const day in this.employeeData[this.year][this.month]["Employees"][names[i - 1]]) {
+              count += this.employeeData[this.year][this.month]["Employees"][names[i - 1]][day];
+            }
+            cellText = document.createTextNode(`${count}`);
+            cell.id = names[i - 1] + " Total";
+            grandCount += count;
+          } 
+        } else {
+          if (j === 0) {
+            cellText = document.createTextNode(`Grand Total`);
+            cell.id = ""
+          } else if (j <= weekdays.length) {
+            cellText = document.createTextNode(`  `);
+            cell.id = ""
+          } else {
+            cellText = document.createTextNode(`${grandCount}`);
+            cell.id = "Grand Total"
+          }
+        }
+        //const cellText = document.createTextNode(`cell in row ${i}, column ${j}`);
+        if (cellText) {
+          cell.appendChild(cellText);
+        }
+        row.appendChild(cell);
+      }
+      // add the row to the end of the table body
+      tblBody.appendChild(row);
+    }
+    // put the <tbody> in the <table>
+    tbl.appendChild(tblBody);
+    
+  }
   //Functions for the buttons (currently just made to check that thte buttons work)
   export() {
     console.log("Export Button working"); //test
