@@ -108,27 +108,44 @@ mat-form-field {
 
 .button-addNew {
     border: none;
-    color: #000;
+    color: white;
     background-color: #FBC900;
     padding: 15px 32px;
     font-size: 16px;
+    font-weight: 800;
     margin-left: 20%;
     border-radius: 50px;
+    position: absolute;
+    left: 63%;
   }
 
 .button-exportToPDF {
     border: 2px solid #FBC900;
+    background-color: transparent;
     padding: 15px 32px;
+    color: #FBC900;
     font-size: 16px;
+    font-weight: 800;
     border-radius: 50px;
     border-radius: 50px;
     margin-left: 67%;    
 }
 .button-save {
+    color: white;
+    border: none;
+    background-color: #FBC900;
     padding: 15px 32px;
     font-size: 16px;
+    font-weight: 800;
     border-radius: 50px;
     margin-left: 1%;
+    position: absolute;
+    left: 89%;
+}
+
+.button-save:hover,.button-exportToPDF:hover, .button-addNew:hover{
+    transform: scale(1.05);
+    box-shadow: 0 5px 10px rgba(154,160,185,.05), 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 mat-checkbox {
@@ -180,4 +197,32 @@ th, td {
 .center {
     margin-left: auto;
     margin-right: auto;
+}
+
+#projectSelect{
+    position: relative;
+    left: 1%;
+    top: 45px;
+}
+
+#monthSelect{
+    position: relative;
+    left: 3%;
+    top: 45px;
+}
+
+
+.box{
+    height: 50ex;
+    width: 165ex;
+    
+    background-color: whitesmoke;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    position: absolute;
+    left: 10.1%;
+    top: 17%;
+    z-index: -1;
+    
 }
