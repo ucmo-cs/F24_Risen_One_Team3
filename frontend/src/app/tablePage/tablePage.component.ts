@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError, Observable } from 'rxjs';
+import { map, catchError, Observable, delay } from 'rxjs';
+import { jsPDF } from 'jspdf';
 
 
 interface Project {
@@ -58,6 +59,7 @@ export class tablePageComponent {
   month: string = "";
   year = 0;
   employee: String = "";
+  isEditing: boolean = false;
   
   constructor(private http: HttpClient, private router: Router) {}
   
@@ -127,6 +129,16 @@ export class tablePageComponent {
   }
   const tbl: HTMLElement | null = document.getElementById("timeTable");
   if (!tbl) return;
+  // Select the current tbody
+  const oldTbody = tbl.querySelector('tbody');
+    
+  // Remove the current tbody
+  if (oldTbody) {
+    tbl.removeChild(oldTbody);
+  }
+
+  const projectDateText = document.getElementById("projectDate") as HTMLSelectElement;
+  projectDateText.textContent = "Month and Year";
   const tblBody: HTMLTableSectionElement = document.createElement("tbody");
   
   // creating all cells
@@ -173,6 +185,7 @@ export class tablePageComponent {
   //Sends the selected project (via projectName) to the backend and gets that projects info
   changeProject() {
     console.log("Project Changed"); //test
+    this.generateDefaultTable();
     //Gets the selected project's name
     const currentElement = document.getElementById("projectSelect") as HTMLSelectElement;
     const ProjectName = currentElement.options[currentElement.selectedIndex].text;
@@ -250,128 +263,134 @@ export class tablePageComponent {
     }
   }
 
-  createTrueTable(){
+  createTrueTable() {
     const months: string[] = [
-      "January", "February", "March", "April", "May", "June", 
+      "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
     const monthInt = months.indexOf(this.month);
-    monthInt + 1;
-    const numDays: number = new Date(this.year, monthInt, 0).getDate();
-    const isWeekday = (date: Date) => date.getDay()
+    const numDays: number = new Date(this.year, monthInt + 1, 0).getDate();
+    const isWeekday = (date: Date) => date.getDay();
     const weekdays: number[] = [];
+
     for (let g = 1; g <= numDays; g++) {
-      if (isWeekday(new Date(this.year, monthInt, g)) != 0 && isWeekday(new Date(this.year, monthInt, g)) != 6){
+      if (isWeekday(new Date(this.year, monthInt, g)) !== 0 && isWeekday(new Date(this.year, monthInt, g)) !== 6) {
         weekdays.push(g);
       }
     }
+
     const tbl: HTMLElement | null = document.getElementById("timeTable");
     if (!tbl) return;
+
     // Select the current tbody
     const oldTbody = tbl.querySelector('tbody');
-    
     // Remove the current tbody
     if (oldTbody) {
-        tbl.removeChild(oldTbody);
+      tbl.removeChild(oldTbody);
     }
 
-    const names = [];
-    for (const person in this.employeeData[this.year][this.month]["Employees"]) {
-      names.push(person);
-    }
-
-    /*
-    console.log(weekdays);
-    console.log(names);
-    console.log(this.employeeData[this.year][this.month]["Employees"][names[0]]);
-    console.log(this.employeeData[this.year][this.month]["Employees"][names[0]][1]);
-    for (const day in this.employeeData[this.year][this.month]["Employees"][names[0]]) {
-      console.log("Day: " + day);
-      console.log("Weekday: " + weekdays[0]);
-      if (Number(day) == weekdays[0]) {
-        console.log("Result if above match: " + this.employeeData[this.year][this.month]["Employees"][names[0]][day]);
-      }
-    }
-    */
+    const names = Object.keys(this.employeeData[this.year][this.month]["Employees"]);
 
     const tblBody: HTMLTableSectionElement = document.createElement("tbody");
-
     let grandCount = 0;
+
     // creating all cells
     for (let i = 0; i <= names.length + 1; i++) {
-      // creates a table row
       const row: HTMLTableRowElement = document.createElement("tr");
       for (let j = 0; j <= weekdays.length + 1; j++) {
-        // creates the table cell and fills it based on position
         const cell: HTMLTableCellElement = document.createElement("td");
-        let cellText;
-        if (i === 0) {
+        let cellContent;
+        cell.style.border = "1px solid black";
+        cell.style.background = "white";
+        cell.style.color = "black";
+        cell.style.textOverflow = "ellipsis";
+        cell.style.overflow = "hidden";
+        cell.style.whiteSpace = "normal";
+
+        if (i === 0) { // Header row
+          cell.style.background = "black";
+          cell.style.color = "white";
           if (j === 0) {
-            cellText = document.createTextNode(`Names`);
-            cell.id = "Names";
+            cellContent = document.createTextNode(`Names`);
           } else if (j <= weekdays.length) {
-            cellText = document.createTextNode(`${weekdays[j - 1]}`);
-            cell.id = String(weekdays[j - 1]);
+            cellContent = document.createTextNode(`${weekdays[j - 1]}`);
           } else {
-            cellText = document.createTextNode(`Total`);
-            cell.id = "Total";
+            cellContent = document.createTextNode(`Total`);
           }
-        }else if (i != (names.length + 1)) {
+        } else if (i !== (names.length + 1)) { // Employee rows
           if (j === 0) {
-            cellText = document.createTextNode(`${names[i - 1]}`);
-            cell.id = names[i - 1] + "  0";
+              cellContent = document.createTextNode(`${names[i - 1]}`);
           } else if (j <= weekdays.length) {
-            for (const day in this.employeeData[this.year][this.month]["Employees"][names[i - 1]]) {
-              if (Number(day) == weekdays[j - 1]) {
-                cellText = document.createTextNode(`${
-                  this.employeeData[this.year][this.month]["Employees"][names[i - 1]][day]}`);
-                break;
-              } else {
-                cellText = document.createTextNode(`0`);
-              }
+            const dayKey = weekdays[j - 1].toString();
+            const hoursWorked = this.employeeData[this.year][this.month]["Employees"][names[i - 1]][dayKey] || 0;
+            if (this.isEditing) {
+              // Create input element if in edit mode
+              const input = document.createElement("input");
+              input.type = "number";
+              input.value = hoursWorked.toString();
+              input.style.width = "50px"; 
+              input.style.padding = "2px";
+              input.style.fontSize = "14px";
+              input.min = "0";
+              input.onchange = () => {
+                // Update the employee data on change
+                this.employeeData[this.year][this.month]["Employees"][names[i - 1]][dayKey] = Number(input.value);
+              };
+              cell.appendChild(input);
+            } else {
+              // Display hours worked as text
+              cellContent = document.createTextNode(hoursWorked.toString());
             }
-            cell.id = names[i - 1] + " " + String(weekdays[j - 1]);
-          } else {
-            let count = 0;
-            for (const day in this.employeeData[this.year][this.month]["Employees"][names[i - 1]]) {
-              count += this.employeeData[this.year][this.month]["Employees"][names[i - 1]][day];
+          } else { // Total for the employee
+            const totalHours = Object.values(this.employeeData[this.year][this.month]["Employees"][names[i - 1]]).reduce((a, b) => a + (b || 0), 0);
+            if (this.isEditing) {
+              cellContent = document.createTextNode(`--`); // Placeholder during editing
+            } else {
+              cellContent = document.createTextNode(totalHours.toString());
             }
-            cellText = document.createTextNode(`${count}`);
-            cell.id = names[i - 1] + " Total";
-            grandCount += count;
-          } 
-        } else {
+            grandCount += totalHours;
+          }
+        } else { // Grand total row
           if (j === 0) {
-            cellText = document.createTextNode(`Grand Total`);
-            cell.id = ""
+            cellContent = document.createTextNode(`Grand Total`);
           } else if (j <= weekdays.length) {
-            cellText = document.createTextNode(`  `);
-            cell.id = ""
+            cellContent = document.createTextNode(` `);
           } else {
-            cellText = document.createTextNode(`${grandCount}`);
-            cell.id = "Grand Total"
+            cellContent = document.createTextNode(`${grandCount}`);
           }
         }
-        //const cellText = document.createTextNode(`cell in row ${i}, column ${j}`);
-        if (cellText) {
-          cell.appendChild(cellText);
+        if (cellContent) {
+          cell.appendChild(cellContent);
         }
         row.appendChild(cell);
       }
-      // add the row to the end of the table body
       tblBody.appendChild(row);
     }
-    // put the <tbody> in the <table>
     tbl.appendChild(tblBody);
-    
   }
   //Functions for the buttons (currently just made to check that thte buttons work)
   export() {
     console.log("Export Button working"); //test
+    const content = document.getElementById("page");
+    if (content) {
+      content.classList.add('pdf-export');
+      const pdf = new jsPDF('l', 'mm', [500, 297]);
+      // Use the html method to convert the HTML to PDF
+      pdf.html(content, {
+        callback: function (doc) {doc.save('exported-file.pdf');},
+        x: 10, 
+        y: 10,
+        width: 480, 
+        windowWidth: 500
+      });
+    }
   }
+
   edit() {
-    console.log("Edit Button working"); //test
+    this.isEditing = !this.isEditing;
+    this.createTrueTable();
   }
+
   save() {
     console.log("save Button working"); //test
   }
