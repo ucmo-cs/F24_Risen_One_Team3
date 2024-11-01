@@ -377,7 +377,10 @@ export class tablePageComponent {
       const pdf = new jsPDF('l', 'mm', [500, 297]);
       // Use the html method to convert the HTML to PDF
       pdf.html(content, {
-        callback: function (doc) {doc.save('exported-file.pdf');},
+        callback: function (doc) {
+          doc.save('exported-file.pdf');
+          content.classList.remove('pdf-export');
+        },
         x: 10, 
         y: 10,
         width: 480, 

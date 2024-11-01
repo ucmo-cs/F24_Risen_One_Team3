@@ -189,7 +189,8 @@ span {
 table, th, td, tr {
     border: 1px solid black; 
     border-collapse: collapse;
-    width: 100%;
+    table-layout: auto;
+    width: 90%;
 }
 th, td {
     padding: 10px;
@@ -215,7 +216,6 @@ th, td {
 .box{
     height: 50ex;
     width: 165ex;
-    
     background-color: whitesmoke;
     border-color: black;
     border-style: solid;
@@ -225,4 +225,11 @@ th, td {
     top: 17%;
     z-index: -1;
     
+}
+
+.pdf-export {
+    transform: scale(0.7); /* Scale down the content */
+    transform-origin: top left; /* Ensure scaling happens from the top-left corner */
+    width: 142.86%; /* Adjust the width to prevent clipping */
+    overflow: hidden; /* Hide overflowed content */
 }
