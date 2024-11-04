@@ -396,5 +396,33 @@ export class tablePageComponent {
 
   save() {
     console.log("save Button working"); //test
+
+    const body = {
+      ProjectName: this.getSelectedProjectName(), // Get the currently selected project name
+      TimesheetData: {
+        [this.year]: {
+          [this.month]: {
+            Employees: this.employeeData[this.year][this.month]["Employees"]
+          }
+        }
+      }
+    };
+    console.log(body);
+
+    this.http.put<ApiResponse>(this.apiUrl2, body).subscribe({
+      next: (response) => {
+        console.log('Data successfully saved:', response);
+        // You might want to display a success message to the user
+      },
+      error: (error) => {
+        console.error('Error occurred while saving data:', error);
+        // Display an error message to the user
+      }
+    });
+  }
+
+  private getSelectedProjectName(): string {
+    const currentElement = document.getElementById("projectSelect") as HTMLSelectElement;
+    return currentElement.options[currentElement.selectedIndex].text;
   }
 }
