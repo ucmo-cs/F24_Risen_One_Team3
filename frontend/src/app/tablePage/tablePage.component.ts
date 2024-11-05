@@ -53,13 +53,17 @@ interface ApiResponse2 {
 
 export class tablePageComponent {
   
-  private apiUrl2 = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/Project";  // api endpoint (change to yours)
+  private apiUrl2 = "";  // api endpoint (change to yours)
+  private apiUrl3 = "";  // api endpoint (change to yours)
+
   projects: any[] = [];
   employeeData: YearlyData = {};
   month: string = "";
   year = 0;
   employee: String = "";
   isEditing: boolean = false;
+
+  private originalEmployeeData: YearlyData = {};///
   
   constructor(private http: HttpClient, private router: Router) {}
   
@@ -198,6 +202,7 @@ export class tablePageComponent {
       map(response => {
         console.log('API Response:', response); //test
         this.employeeData = response.body; //Puts the collected data into a global variable for later
+        this.originalEmployeeData = JSON.parse(JSON.stringify(response.body)); // Deep copy to preserve original data
         console.log(this.employeeData); //test
         this.fillDate();
         //return response; // Return the response for further use if needed
@@ -394,29 +399,44 @@ export class tablePageComponent {
     this.createTrueTable();
   }
 
+  // Method to update the original timesheet data with the edited values
+  private updateTimesheetData(newData: YearlyData): YearlyData {
+    const updatedData = JSON.parse(JSON.stringify(this.originalEmployeeData)); 
+    for (const year in newData) {
+      for (const month in newData[year]) {
+        for (const employee in newData[year][month].Employees) {
+          if (!updatedData[year]) {
+            updatedData[year] = { [month]: { Employees: {} } };
+          }
+          if (!updatedData[year][month]) {
+            updatedData[year][month] = { Employees: {} };
+          }
+          updatedData[year][month].Employees[employee] = { ...updatedData[year][month].Employees[employee], ...newData[year][month].Employees[employee] };
+        }
+      }
+    }
+    return updatedData;
+  }
+
+
   save() {
     console.log("save Button working"); //test
 
+    const updatedEmployeeData = this.updateTimesheetData(this.employeeData);
+
     const body = {
       ProjectName: this.getSelectedProjectName(), // Get the currently selected project name
-      TimesheetData: {
-        [this.year]: {
-          [this.month]: {
-            Employees: this.employeeData[this.year][this.month]["Employees"]
-          }
-        }
-      }
+      TimesheetData: updatedEmployeeData // Use the updated data here
     };
+    
     console.log(body);
 
-    this.http.put<ApiResponse>(this.apiUrl2, body).subscribe({
+    this.http.post<ApiResponse>(this.apiUrl3, body).subscribe({
       next: (response) => {
         console.log('Data successfully saved:', response);
-        // You might want to display a success message to the user
       },
       error: (error) => {
         console.error('Error occurred while saving data:', error);
-        // Display an error message to the user
       }
     });
   }

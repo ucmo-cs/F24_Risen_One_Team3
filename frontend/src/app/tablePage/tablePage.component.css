@@ -116,7 +116,8 @@ mat-form-field {
     margin-left: 20%;
     border-radius: 50px;
     position: absolute;
-    left: 63%;
+    left: 111ex;
+    top: 19ex;
   }
 
 .button-exportToPDF {
@@ -128,7 +129,10 @@ mat-form-field {
     font-weight: 800;
     border-radius: 50px;
     border-radius: 50px;
+    position: relative;
     margin-left: 67%;    
+    top: 4ex;
+    left: -5ex;
 }
 .button-save {
     color: white;
@@ -140,7 +144,8 @@ mat-form-field {
     border-radius: 50px;
     margin-left: 1%;
     position: absolute;
-    left: 89%;
+    left: 159ex;
+    top: 19ex;
 }
 
 .button-save:hover,.button-exportToPDF:hover, .button-addNew:hover{
@@ -202,27 +207,27 @@ th, td {
 
 #projectSelect{
     position: relative;
-    left: 1%;
-    top: 45px;
+    left: 8ex;
+    top: 50px;
 }
 
 #monthSelect{
     position: relative;
-    left: 3%;
-    top: 45px;
+    left: 10ex;
+    top: 50px;
 }
 
 
 .box{
     height: 50ex;
-    width: 165ex;
+    width: 153.5ex;
     background-color: whitesmoke;
     border-color: black;
     border-style: solid;
     border-width: 1px;
     position: absolute;
-    left: 10.1%;
-    top: 17%;
+    left: 24ex;
+    top: 140px;
     z-index: -1;
     
 }
@@ -232,4 +237,10 @@ th, td {
     transform-origin: top left; /* Ensure scaling happens from the top-left corner */
     width: 142.86%; /* Adjust the width to prevent clipping */
     overflow: hidden; /* Hide overflowed content */
+}
+
+#projectDate {
+    margin-right: 80px;
+    position: relative;
+    left: 4ex;
 }
