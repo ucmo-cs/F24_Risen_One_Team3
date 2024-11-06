@@ -247,3 +247,20 @@ th, td {
     position: relative;
     left: 4ex;
 }
+
+#managerSigniture {
+    position: relative;
+    left: 4ex;
+}
+#managerDate {
+    position: relative;
+    left: 4ex;
+}
+#managerLabel {
+    position: relative;
+    left: 4ex;
+}
+#dateLabel {
+    position: relative;
+    left: 4ex;
+}
