@@ -4,6 +4,7 @@ import {provideNativeDateAdapter} from '@angular/material/core';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError, Observable, delay } from 'rxjs';
 import { jsPDF } from 'jspdf';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 interface Project {
@@ -53,8 +54,8 @@ interface ApiResponse2 {
 
 export class tablePageComponent {
   
-  private apiUrl2 = "";  // api endpoint (change to yours)
-  private apiUrl3 = "";  // api endpoint (change to yours)
+  private apiUrl2 = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/Project";  // api endpoint (change to yours)
+  private apiUrl3 = "https://rahwhq94d7.execute-api.us-east-2.amazonaws.com/dev/ProjectUpdate";  // api endpoint (change to yours)
 
   projects: any[] = [];
   employeeData: YearlyData = {};
@@ -65,7 +66,7 @@ export class tablePageComponent {
 
   private originalEmployeeData: YearlyData = {};///
   
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private snackBar: MatSnackBar) {}
   
   //Stuff to do when page pulled up
   ngOnInit() {
@@ -421,6 +422,9 @@ export class tablePageComponent {
 
   save() {
     console.log("save Button working"); //test
+    if (this.isEditing){
+      this.edit();
+    }
 
     const updatedEmployeeData = this.updateTimesheetData(this.employeeData);
 
@@ -434,9 +438,11 @@ export class tablePageComponent {
     this.http.post<ApiResponse>(this.apiUrl3, body).subscribe({
       next: (response) => {
         console.log('Data successfully saved:', response);
+        this.openSnackBar('Data successfully saved.', 'Close');
       },
       error: (error) => {
         console.error('Error occurred while saving data:', error);
+        this.openSnackBar('Something went wrong please try again.', 'Close');
       }
     });
   }
@@ -444,5 +450,11 @@ export class tablePageComponent {
   private getSelectedProjectName(): string {
     const currentElement = document.getElementById("projectSelect") as HTMLSelectElement;
     return currentElement.options[currentElement.selectedIndex].text;
+  }
+
+  private openSnackBar(message: string, action: string) { // this displays the error message that pops up when invalid username/password
+    this.snackBar.open(message, action, {
+      duration: 3000,
+    });
   }
 }
