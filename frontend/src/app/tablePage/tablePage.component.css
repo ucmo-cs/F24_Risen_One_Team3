@@ -118,6 +118,7 @@ mat-form-field {
     position: absolute;
     left: 111ex;
     top: 19ex;
+    z-index: 1;
   }
 
 .button-exportToPDF {
@@ -133,6 +134,7 @@ mat-form-field {
     margin-left: 67%;    
     top: 4ex;
     left: -5ex;
+    z-index: 1;
 }
 .button-save {
     color: white;
@@ -146,6 +148,7 @@ mat-form-field {
     position: absolute;
     left: 159ex;
     top: 19ex;
+    z-index: 1;
 }
 
 .button-save:hover,.button-exportToPDF:hover, .button-addNew:hover{
@@ -219,7 +222,7 @@ th, td {
 
 
 .box{
-    height: 50ex;
+    height: 56ex;
     width: 153.5ex;
     background-color: whitesmoke;
     border-color: black;
