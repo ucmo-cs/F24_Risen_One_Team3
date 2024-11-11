@@ -10,6 +10,7 @@
   },
   "private": true,
   "dependencies": {
+    "@18f/us-federal-holidays": "^4.0.0",
     "@angular/animations": "^18.2.3",
     "@angular/common": "^18.2.3",
     "@angular/compiler": "^18.2.3",

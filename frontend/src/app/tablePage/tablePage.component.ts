@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, catchError, Observable, delay } from 'rxjs';
 import { jsPDF } from 'jspdf';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { isAHoliday } from '@18f/us-federal-holidays';
 
 
 interface Project {
@@ -128,7 +129,8 @@ export class tablePageComponent {
   const isWeekday = (date: Date) => date.getDay()
   const weekdays: number[] = [];
   for (let g = 1; g <= numDays; g++) {
-    if (isWeekday(new Date(year, month, g)) != 0 && isWeekday(new Date(year, month, g)) != 6){
+    const currentDate = new Date(year, month, g);
+    if (isWeekday(currentDate) != 0 && isWeekday(currentDate) != 6 && !isAHoliday(currentDate)){
       weekdays.push(g);
     }
   }
@@ -280,7 +282,8 @@ export class tablePageComponent {
     const weekdays: number[] = [];
 
     for (let g = 1; g <= numDays; g++) {
-      if (isWeekday(new Date(this.year, monthInt, g)) !== 0 && isWeekday(new Date(this.year, monthInt, g)) !== 6) {
+      const currentDate = new Date(this.year, monthInt, g);
+      if (isWeekday(currentDate) != 0 && isWeekday(currentDate) != 6 && !isAHoliday(currentDate)) {
         weekdays.push(g);
       }
     }
