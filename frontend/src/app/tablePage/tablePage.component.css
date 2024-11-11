@@ -116,8 +116,8 @@ mat-form-field {
     margin-left: 20%;
     border-radius: 50px;
     position: absolute;
-    left: 111ex;
-    top: 19ex;
+    left: 108ex;
+    top: 18.5ex;
     z-index: 1;
   }
 
@@ -133,7 +133,7 @@ mat-form-field {
     position: relative;
     margin-left: 67%;    
     top: 4ex;
-    left: -5ex;
+    left: -3.5ex;
     z-index: 1;
 }
 .button-save {
@@ -146,8 +146,8 @@ mat-form-field {
     border-radius: 50px;
     margin-left: 1%;
     position: absolute;
-    left: 159ex;
-    top: 19ex;
+    left: 154ex;
+    top: 18.5ex;
     z-index: 1;
 }
 
@@ -232,7 +232,7 @@ th, td {
     left: 24ex;
     top: 140px;
     z-index: -1;
-    
+    border-radius: 17px;
 }
 
 .pdf-export {
@@ -250,17 +250,27 @@ th, td {
 
 #managerSigniture {
     position: relative;
-    left: 4ex;
+    top: 6ex;
+    left: 8ex;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: whitesmoke;
 }
 #managerDate {
     position: relative;
-    left: 4ex;
+    top: 6ex;
+    left: 10ex;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: whitesmoke;
 }
 #managerLabel {
     position: relative;
-    left: 4ex;
+    left: 8ex;
 }
 #dateLabel {
     position: relative;
-    left: 4ex;
+    left: 16ex;
 }
