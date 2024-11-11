@@ -378,14 +378,17 @@ export class tablePageComponent {
   export() {
     console.log("Export Button working"); //test
     const content = document.getElementById("page");
-    if (content) {
+    const box = document.getElementById("box");
+    if (content && box) {
       content.classList.add('pdf-export');
+      box.classList.remove('box');
       const pdf = new jsPDF('l', 'mm', [500, 297]);
       // Use the html method to convert the HTML to PDF
       pdf.html(content, {
         callback: function (doc) {
           doc.save('exported-file.pdf');
           content.classList.remove('pdf-export');
+          box.classList.add('box');
         },
         x: 10, 
         y: 10,
